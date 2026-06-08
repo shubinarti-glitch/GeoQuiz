@@ -95,18 +95,22 @@ fun QuizScreen(modifier: Modifier = Modifier) {
                 Button(onClick = { onAnswer(false) }) { Text("FALSE") }
             }
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Button(
-                onClick = {
-                    if (currentIndex < questions.lastIndex) {
+        // п.3 ЛР: после ответа на последний вопрос NEXT блокируется и становится невидимым
+        val isLast = currentIndex == questions.lastIndex
+        val showNext = !(isLast && answered)
+        if (showNext) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    enabled = answered && !isLast,
+                    onClick = {
                         currentIndex++
                         answered = false
                     }
-                }
-            ) { Text("NEXT >") }
+                ) { Text("NEXT >") }
+            }
         }
     }
 }
