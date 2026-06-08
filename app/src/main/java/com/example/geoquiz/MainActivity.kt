@@ -18,6 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +61,9 @@ fun GeoQuizApp() {
 
 @Composable
 fun QuizScreen(modifier: Modifier = Modifier) {
+    var currentIndex by remember { mutableIntStateOf(0) }
+    val currentQuestion = questions[currentIndex]
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -65,7 +72,7 @@ fun QuizScreen(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = questions.first().text,
+            text = currentQuestion.text,
             style = MaterialTheme.typography.bodyLarge
         )
         Row(
@@ -79,7 +86,11 @@ fun QuizScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
         ) {
-            Button(onClick = {}) { Text("NEXT >") }
+            Button(
+                onClick = {
+                    if (currentIndex < questions.lastIndex) currentIndex++
+                }
+            ) { Text("NEXT >") }
         }
     }
 }
