@@ -20,6 +20,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -62,7 +63,12 @@ fun GeoQuizApp() {
 @Composable
 fun QuizScreen(modifier: Modifier = Modifier) {
     var currentIndex by remember { mutableIntStateOf(0) }
+    var answered by remember { mutableStateOf(false) }
     val currentQuestion = questions[currentIndex]
+
+    val onAnswer: (Boolean) -> Unit = { _ ->
+        answered = true
+    }
 
     Column(
         modifier = modifier
@@ -75,12 +81,15 @@ fun QuizScreen(modifier: Modifier = Modifier) {
             text = currentQuestion.text,
             style = MaterialTheme.typography.bodyLarge
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(onClick = {}) { Text("TRUE") }
-            Button(onClick = {}) { Text("FALSE") }
+        // п.2 ЛР: после ответа кнопки TRUE/FALSE становятся невидимыми
+        if (!answered) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(onClick = { onAnswer(true) }) { Text("TRUE") }
+                Button(onClick = { onAnswer(false) }) { Text("FALSE") }
+            }
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -88,7 +97,10 @@ fun QuizScreen(modifier: Modifier = Modifier) {
         ) {
             Button(
                 onClick = {
-                    if (currentIndex < questions.lastIndex) currentIndex++
+                    if (currentIndex < questions.lastIndex) {
+                        currentIndex++
+                        answered = false
+                    }
                 }
             ) { Text("NEXT >") }
         }
