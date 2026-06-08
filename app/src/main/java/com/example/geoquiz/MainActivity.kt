@@ -110,6 +110,10 @@ fun QuizScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
+            text = "Question ${currentIndex + 1} of ${questions.size}",
+            style = MaterialTheme.typography.labelMedium
+        )
+        Text(
             text = currentQuestion.text,
             style = MaterialTheme.typography.bodyLarge
         )
