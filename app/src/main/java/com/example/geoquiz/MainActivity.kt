@@ -64,10 +64,14 @@ fun GeoQuizApp() {
 fun QuizScreen(modifier: Modifier = Modifier) {
     var currentIndex by remember { mutableIntStateOf(0) }
     var answered by remember { mutableStateOf(false) }
+    var correctCount by remember { mutableIntStateOf(0) }
     val currentQuestion = questions[currentIndex]
 
-    val onAnswer: (Boolean) -> Unit = { _ ->
-        answered = true
+    val onAnswer: (Boolean) -> Unit = { userAnswer ->
+        if (!answered) {
+            if (userAnswer == currentQuestion.answer) correctCount++
+            answered = true
+        }
     }
 
     Column(
