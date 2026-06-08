@@ -14,6 +14,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -22,12 +25,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.geoquiz.ui.theme.GeoQuizTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +49,9 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GeoQuizApp() {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -54,14 +62,28 @@ fun GeoQuizApp() {
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
-        QuizScreen(modifier = Modifier.padding(innerPadding))
+        QuizScreen(
+            modifier = Modifier.padding(innerPadding),
+            onShowResult = { message ->
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = message,
+                        duration = SnackbarDuration.Indefinite
+                    )
+                }
+            }
+        )
     }
 }
 
 @Composable
-fun QuizScreen(modifier: Modifier = Modifier) {
+fun QuizScreen(
+    modifier: Modifier = Modifier,
+    onShowResult: (String) -> Unit = {}
+) {
     var currentIndex by remember { mutableIntStateOf(0) }
     var answered by remember { mutableStateOf(false) }
     var correctCount by remember { mutableIntStateOf(0) }
@@ -71,6 +93,12 @@ fun QuizScreen(modifier: Modifier = Modifier) {
         if (!answered) {
             if (userAnswer == currentQuestion.answer) correctCount++
             answered = true
+            // п.4 ЛР: после последнего вопроса показать результат на всплывающей панели
+            if (currentIndex == questions.lastIndex) {
+                onShowResult(
+                    "Правильных ответов: $correctCount из ${questions.size}"
+                )
+            }
         }
     }
 
