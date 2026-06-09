@@ -56,7 +56,7 @@ fun GeoQuizApp() {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("GeoQuiz") },
+                title = { Text("Гео-викторина") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
@@ -110,7 +110,7 @@ fun QuizScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Question ${currentIndex + 1} of ${questions.size}",
+            text = "Вопрос ${currentIndex + 1} из ${questions.size}",
             style = MaterialTheme.typography.labelMedium
         )
         Text(
@@ -123,8 +123,8 @@ fun QuizScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Button(onClick = { onAnswer(true) }) { Text("TRUE") }
-                Button(onClick = { onAnswer(false) }) { Text("FALSE") }
+                Button(onClick = { onAnswer(true) }) { Text("ДА") }
+                Button(onClick = { onAnswer(false) }) { Text("НЕТ") }
             }
         }
         // п.3 ЛР: после ответа на последний вопрос NEXT блокируется и становится невидимым
@@ -141,7 +141,7 @@ fun QuizScreen(
                         currentIndex++
                         answered = false
                     }
-                ) { Text("NEXT >") }
+                ) { Text("ДАЛЕЕ >") }
             }
         }
     }
